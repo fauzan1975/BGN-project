@@ -7,6 +7,7 @@ import MapView from './assets/components/peta/MapView'
 import './App.css'
 
 function App() {
+
   return (
     <div style={{ flex: 1, height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
