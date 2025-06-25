@@ -110,6 +110,8 @@ function MapView() {
         'SULSEL': 'SULAWESI SELATAN',
         'SULTRA': 'SULAWESI TENGGARA',
         'SULTENG': 'SULAWESI TENGAH',
+        'DKI JAKARTA': 'JAKARTA RAYA'
+
     };
 
     const normalizeProvinsi = (prov) => {
@@ -143,18 +145,27 @@ function MapView() {
 
     const filteredData = allData.filter(item => {
 
-        if (statusFilter !== 'Semua') {
-            console.log("🔎 Cek:", item.status, "→ Match?", statusKategori[statusFilter].includes(item.status));
-        }
+        const rawProv = String(item.provinsi || '').trim().toUpperCase();
+        const itemProv = provAlias[rawProv] || rawProv;
 
-        const provMatch = normalize(item.provinsi).includes(provName);
-        // const statusMatch =
-        //     statusFilter === 'Semua' || (item.status || '').toLowerCase() === statusFilter.toLowerCase();
+        const normalizedProvinceName = provAlias[provName] || provName;
+
+        const provMatch = itemProv === normalizedProvinceName;
+
         const statusMatch =
             statusFilter === 'Semua' ||
-            (statusKategori[statusFilter] || []).includes((item.status || '').trim())
+            (statusKategori[statusFilter] || []).includes((item.status || '').trim());
 
         return provMatch && statusMatch;
+
+        // const provMatch = normalize(item.provinsi).includes(provName);
+        // // const statusMatch =
+        // //     statusFilter === 'Semua' || (item.status || '').toLowerCase() === statusFilter.toLowerCase();
+        // const statusMatch =
+        //     statusFilter === 'Semua' ||
+        //     (statusKategori[statusFilter] || []).includes((item.status || '').trim())
+
+        // return provMatch && statusMatch;
     });
 
     const paginatedData = filteredData.slice(
@@ -163,7 +174,7 @@ function MapView() {
     );
 
     const onEachFeature = (feature, layer) => {
-        console.log("🌍 GeoJSON province:", feature.properties?.province || feature.properties?.name);
+        console.log("🌍 GeoJSON province:", feature.properties?.state || feature.properties?.name);
 
         const provName = feature.properties?.state;
         const key = provName?.toUpperCase();
@@ -210,7 +221,8 @@ function MapView() {
                     setFeature(null);
                     setSelectedProvince(null);
                 }} />
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='<a>Sistem Monitoring Dapur BGN</a> ©2025'
+                />
 
                 {!feature && (
                     <GeoJSON
